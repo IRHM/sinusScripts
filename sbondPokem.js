@@ -1,30 +1,45 @@
 registerPlugin({
     name: 'sbondPokem',
-    version: '0.1',
+    version: '2',
     description: 'Pokem bro',
     author: 'sbond',
-    vars: [],
-    autorun: true
+    vars: [
+		{
+			name: 'admins',
+			title: 'Who can use commands (User Unique/Global ID)',
+			placeholder: '9x19LIsbondoLHTQ0m3G4LpQ4wE=',
+			type: 'string'
+		}
+	],
+    autorun: false
 }, function(sinusbot, config){
     var event = require('event');
 	var backend = require('backend');
 	var engine = require('engine');
 
 	event.on('chat', function(ev){
+		// Get client
 		var client = backend.getClientByName(ev.client.name());
+		
+		// Exit if user is not admin
+		if(client.uid() != config.admins){
+			exit();
+		}
 
 		engine.log('Got message "'+ev.text +'" from '+ ev.client.name());
 		
-		if(ev.text.indexOf("!poke") > -1 && client.databaseID() == "7"){
+		// Check if message includes !poke
+		if(ev.text.indexOf("!poke") > -1){
 			alertEm("poke", ev.text);
 		}
 		
-		if(ev.text.indexOf("!chat") > -1){
+		// Check if message includes !chat
+		if(ev.text.indexOf("!chat") > -1){			
 			alertEm("chat", ev.text);
 		}
 		
 		function alertEm(which, command){
-			if(which == "poke"){
+			if(which == "poke"){				
 				var removeCommand = ev.text.replace('!poke ','');
 				var user = backend.getClientByName(removeCommand);
 				
